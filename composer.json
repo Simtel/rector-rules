@@ -1,0 +1,15 @@
+{
+  "require": {
+    "php": "^8.3",
+    "rector/rector": "^2.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12.0"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Simtel\\RectorRules\\": "src",
+      "Simtel\\RectorRules\\Tests\\": "tests"
+    }
+  }
+}
