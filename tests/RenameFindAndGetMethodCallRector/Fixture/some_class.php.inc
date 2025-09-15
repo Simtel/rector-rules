@@ -2,7 +2,14 @@
 
 namespace Rector\Tests\TypeDeclaration\Rector\RenemameFindAndGetMethodCallRector\Fixture;
 
-// @todo fill code before
+class SomeEntity {
+
+}
+
+
+abstract class SomeEntityRepository {
+    abstract public function findById(int $id): SomeEntity;
+}
 
 ?>
 -----
@@ -10,6 +17,8 @@ namespace Rector\Tests\TypeDeclaration\Rector\RenemameFindAndGetMethodCallRector
 
 namespace Rector\Tests\TypeDeclaration\Rector\RenemameFindAndGetMethodCallRector\Fixture;
 
-// @todo fill code after
+abstract class SomeEntityRepository {
+    abstract public function getById(int $id): SomeEntity;
+}
 
 ?>

@@ -13,7 +13,7 @@ final class RenameFindAndGetMethodCallRectorTest extends AbstractRectorTestCase
     public function test(string $filePath): void
     {
         self::assertFalse(false);
-       // $this->doTestFile($filePath);
+        $this->doTestFile($filePath);
     }
 
     public static function provideData(): \Iterator
