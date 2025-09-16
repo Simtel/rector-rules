@@ -2,11 +2,6 @@
 
 namespace Rector\Tests\TypeDeclaration\Rector\RenemameFindAndGetMethodCallRector\Fixture;
 
-class SomeEntity {
-
-}
-
-
 abstract class SomeEntityRepository {
     abstract public function findById(int $id): SomeEntity;
 }

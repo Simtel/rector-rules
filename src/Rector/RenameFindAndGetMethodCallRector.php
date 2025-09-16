@@ -5,48 +5,104 @@ declare(strict_types=1);
 namespace Simtel\RectorRules\Rector;
 
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Name;
+use PhpParser\Node\NullableType;
+use PhpParser\Node\UnionType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-/**
- * @see RenemameFindAndGetMethodCallRectorTest
- */
 final class RenameFindAndGetMethodCallRector extends AbstractRector
 {
-    /**
-     * @return array<class-string<Node>>
-     */
-    public function getNodeTypes(): array
-    {
-        // @todo select node type
-        return [Class_::class];
-    }
-
-    /**
-     * @param Class_ $node
-     */
-    public function refactor(Node $node): ?Node
-    {
-        // @todo change the node
-
-        return $node;
-    }
-
     /**
      * @throws PoorDocumentationException
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Rename find method to get', [
-            new CodeSample(
-            // code before
-                'findById(int $id): Entity',
-                // code after
-                'getById(int $id): Entity'
-            ),
-        ]);
+        return new RuleDefinition(
+            'Rename find* methods to get* when they return only entity (not nullable)',
+            [
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
+class UserRepository
+{
+    public function findUserById(int $id): User
+    {
+        // ...
+    }
+    
+    public function findUserByEmail(string $email): ?User
+    {
+        // ...
+    }
+}
+CODE_SAMPLE
+                    ,
+                    <<<'CODE_SAMPLE'
+class UserRepository
+{
+    public function getUserById(int $id): User
+    {
+        // ...
+    }
+    
+    public function findUserByEmail(string $email): ?User
+    {
+        // ...
+    }
+}
+CODE_SAMPLE
+                ),
+            ]
+        );
+    }
+
+    public function getNodeTypes(): array
+    {
+        return [ClassMethod::class];
+    }
+
+    public function refactor(Node $node): ?Node
+    {
+        if (!$node instanceof ClassMethod) {
+            return null;
+        }
+
+
+        $methodName = $this->getName($node);
+        if (!$methodName || !str_starts_with($methodName, 'find')) {
+            return null;
+        }
+
+        $returnType = $node->getReturnType();
+        if (!$returnType) {
+            return null;
+        }
+
+        if ($returnType instanceof NullableType) {
+            return null;
+        }
+        if ($returnType instanceof UnionType) {
+            return null;
+        }
+
+        if (!$returnType instanceof Name) {
+            return null;
+        }
+
+        $returnTypeName = $returnType->toString();
+
+        $primitiveTypes = ['int', 'string', 'bool', 'float', 'array', 'object', 'mixed', 'void'];
+        if (in_array(strtolower($returnTypeName), $primitiveTypes, true)) {
+            return null;
+        }
+
+        $newMethodName = 'get' . substr($methodName, 4); // Заменяем "find" на "get"
+
+        $node->name->name = $newMethodName;
+
+        return $node;
     }
 }
