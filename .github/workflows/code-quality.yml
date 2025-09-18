@@ -1,0 +1,48 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    name: Code Quality Checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+        tools: composer:v2
+        
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.composer/cache/files
+        key: dependencies-php-8.3-composer-${{ hashFiles('composer.json') }}
+        restore-keys: |
+          dependencies-php-8.3-composer-
+          dependencies-php-
+        
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-interaction --no-progress
+      
+    - name: Check PHP syntax
+      run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
+      
+    - name: Run PHPStan analysis
+      run: vendor/bin/phpstan analyse --error-format=github
+      
+    - name: Validate composer.json
+      run: composer validate --strict
+      
+    - name: Check for security vulnerabilities
+      run: composer audit

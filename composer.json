@@ -16,5 +16,18 @@
     "psr-4": {
       "Simtel\\RectorRules\\": "src"
     }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test-coverage": "phpunit --coverage-html coverage",
+    "analyse": "phpstan analyse",
+    "check": [
+      "@analyse",
+      "@test"
+    ]
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
   }
 }

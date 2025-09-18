@@ -1,5 +1,9 @@
 # Rector Rules
 
+[![Tests](https://github.com/simtel/rector-rules/workflows/Tests/badge.svg)](https://github.com/simtel/rector-rules/actions)
+[![Code Quality](https://github.com/simtel/rector-rules/workflows/Code%20Quality/badge.svg)](https://github.com/simtel/rector-rules/actions)
+[![PHPStan Level](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat)](https://phpstan.org/)
+
 A collection of custom Rector rules for automated PHP code refactoring.
 
 ## Overview
@@ -124,6 +128,30 @@ vendor/bin/rector process
 ```
 
 ## Development
+
+### Continuous Integration
+
+This project uses GitHub Actions for automated testing and code quality checks:
+
+- **Tests Workflow**: Runs PHPUnit tests on PHP 8.3 and 8.4 with both lowest and stable dependencies
+- **Code Quality Workflow**: Performs static analysis with PHPStan, syntax checking, and security audits
+- **Coverage**: Test coverage reports are uploaded to Codecov
+
+### Local Development Scripts
+
+```bash
+# Run all tests
+composer test
+
+# Run tests with coverage report
+composer test-coverage
+
+# Run static analysis
+composer analyse
+
+# Run both analysis and tests
+composer check
+```
 
 ### Running Tests
 
