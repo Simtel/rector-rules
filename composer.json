@@ -1,4 +1,7 @@
 {
+  "name": "simtel/rector-rules",
+  "description": "Some custom rector rules for use or extend",
+  "license": ["MIT"],
   "require": {
     "php": "^8.3"
   },
