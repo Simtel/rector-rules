@@ -156,6 +156,7 @@ CODE_SAMPLE
     
     /**
      * Creates the new method name by replacing 'find' prefix with 'get'
+     * @return non-empty-string
      */
     private function createNewMethodName(string $methodName): string
     {
