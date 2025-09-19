@@ -12,13 +12,17 @@ final class RenameFindAndGetMethodCallRectorTest extends AbstractRectorTestCase
     #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
-        self::assertFalse(false);
         $this->doTestFile($filePath);
     }
 
     public static function provideData(): \Iterator
     {
         return self::yieldFilesFromDirectory(__DIR__ . '/Fixture');
+    }
+
+    public function testSkipScenariosWhereChangesAreNotApplied(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixture/skip_rename_scenarios.php.inc');
     }
 
     public function provideConfigFilePath(): string

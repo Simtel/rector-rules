@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtel\RectorRules\Rector;
 
 use PhpParser\Node;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\UnionType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Renames 'find*' methods to 'get*' when they return a non-nullable entity type.
- * 
+ *
  * This rule helps enforce naming conventions where:
  * - 'find*' methods return nullable types (might not find the entity)
  * - 'get*' methods return non-nullable types (always return the entity or throw)
@@ -25,19 +25,19 @@ final class RenameFindAndGetMethodCallRector extends AbstractRector
 {
     private const FIND_PREFIX = 'find';
     private const GET_PREFIX = 'get';
-    
+
     /**
      * Primitive types that should not be considered for renaming
      */
     private const PRIMITIVE_TYPES = [
         'int',
-        'string', 
+        'string',
         'bool',
         'float',
         'array',
         'object',
         'mixed',
-        'void'
+        'void',
     ];
     /**
      * @throws PoorDocumentationException
@@ -108,7 +108,7 @@ CODE_SAMPLE
 
         return $node;
     }
-    
+
     /**
      * Checks if the method name should be renamed from 'find*' to 'get*'
      */
@@ -116,7 +116,7 @@ CODE_SAMPLE
     {
         return $methodName !== null && str_starts_with($methodName, self::FIND_PREFIX);
     }
-    
+
     /**
      * Checks if the return type is eligible for renaming (non-nullable entity type)
      */
@@ -130,7 +130,7 @@ CODE_SAMPLE
         if ($returnType instanceof NullableType) {
             return false;
         }
-        
+
         // Skip union types (should remain as 'find*')
         if ($returnType instanceof UnionType) {
             return false;
@@ -145,7 +145,7 @@ CODE_SAMPLE
         $returnTypeName = $returnType->toString();
         return !$this->isPrimitiveType($returnTypeName);
     }
-    
+
     /**
      * Checks if the given type name is a primitive type
      */
@@ -153,7 +153,7 @@ CODE_SAMPLE
     {
         return in_array(strtolower($typeName), self::PRIMITIVE_TYPES, true);
     }
-    
+
     /**
      * Creates the new method name by replacing 'find' prefix with 'get'
      * @return non-empty-string

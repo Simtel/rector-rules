@@ -8,7 +8,8 @@
   "require-dev": {
     "rector/rector": "^1.0",
     "phpunit/phpunit": "^10.0",
-    "phpstan/phpstan": "^1.0"
+    "phpstan/phpstan": "^1.0",
+    "laravel/pint": "^1.0"
   },
   "autoload-dev": {
     "psr-4": {
@@ -24,8 +25,11 @@
     "test": "phpunit",
     "test-coverage": "phpunit --coverage-html coverage",
     "analyse": "phpstan analyse",
+    "format": "pint",
+    "format-check": "pint --test",
     "check": [
       "@analyse",
+      "@format-check",
       "@test"
     ]
   },

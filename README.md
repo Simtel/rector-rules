@@ -149,7 +149,13 @@ composer test-coverage
 # Run static analysis
 composer analyse
 
-# Run both analysis and tests
+# Format code with PSR-12 standards
+composer format
+
+# Check code formatting (without fixing)
+composer format-check
+
+# Run all checks (analysis, formatting, and tests)
 composer check
 ```
 
@@ -164,6 +170,29 @@ vendor/bin/phpunit
 ```bash
 vendor/bin/phpstan analyse
 ```
+
+### Code Formatting
+
+This project uses [Laravel Pint](https://laravel.com/docs/pint) for code formatting, configured to follow PSR-12 standards:
+
+```bash
+# Format all code files
+vendor/bin/pint
+
+# Check formatting without making changes
+vendor/bin/pint --test
+
+# Format specific files or directories
+vendor/bin/pint src/
+vendor/bin/pint tests/
+```
+
+The Pint configuration is stored in `pint.json` and includes:
+- PSR-12 preset
+- Short array syntax
+- Alphabetical import ordering
+- Removal of unused imports
+- Trailing commas in multiline arrays
 
 ### Project Structure
 

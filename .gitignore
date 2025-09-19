@@ -1,4 +1,35 @@
+# Dependencies
 /vendor/
-/.idea/
-/.phpunit.result.cache
-/.phpunit.cache/test-results
+composer.lock
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+/coverage/
+.phpunit.result.cache
+
+# Build artifacts
+/build/
+/dist/
+
+# Logs
+*.log
+
+# Cache directories
+.phpunit.cache
+.phpstan.cache
+.pint.cache
+
+# Environment files
+.env
+.env.local
+.env.*.local
