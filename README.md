@@ -13,7 +13,7 @@ This package provides custom Rector rules to help modernize and improve PHP code
 ## Requirements
 
 - PHP 8.3+
-- Rector 1.0+
+- Rector 2.0+
 
 ## Installation
 
