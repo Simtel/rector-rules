@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Simtel\RectorRules\Rector\PHPUnit;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\VariadicPlaceholder;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -122,8 +126,9 @@ CODE_SAMPLE
     /**
      * Create the callback function with assertions for each consecutive call
      *
-     * @param array $consecutiveArgs
-     * @param array $returnValues
+     * @param array<Arg|VariadicPlaceholder> $consecutiveArgs
+     * @param array<null|Expr> $returnValues
+     * @return Closure
      */
     private function createCallback(array $consecutiveArgs, array $returnValues): Node\Expr\Closure
     {
@@ -157,7 +162,7 @@ CODE_SAMPLE
                 new Variable('this'),
                 new Identifier('assertSame'),
                 [
-                    $this->nodeFactory->createArg($arg->value),
+                    $this->nodeFactory->createArg($arg->value ?? null),
                     $this->nodeFactory->createArg(new Variable('parameters')),
                 ]
             );
