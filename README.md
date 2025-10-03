@@ -8,7 +8,7 @@ A collection of custom Rector rules for automated PHP code refactoring.
 
 ## Overview
 
-This package provides custom Rector rules to help modernize and improve PHP codebases through automated refactoring. Currently includes the `RenameFindAndGetMethodCallRector` rule.
+This package provides custom Rector rules to help modernize and improve PHP codebases through automated refactoring. Currently includes the `RenameFindAndGetMethodCallRector` and `WithConsecutiveToCallbackRector` rules.
 
 ## Requirements
 
@@ -92,6 +92,46 @@ The rule will rename a method from `find*` to `get*` if:
 4. Return type is not a union type
 5. Return type is not a primitive type (int, string, bool, float, array, object, mixed, void)
 
+### WithConsecutiveToCallbackRector
+
+Replaces deprecated PHPUnit [withConsecutive](file:///wsl.localhost/Ubuntu/home/simtel/Worksites/rector-rules/vendor/phpunit/phpunit/src/Framework/MockObject/Builder/InvocationStubber.php#L23-L26) method calls with [willReturnCallback](file:///wsl.localhost/Ubuntu/home/simtel/Worksites/rector-rules/vendor/phpunit/phpunit/src/Framework/MockObject/Builder/InvocationStubber.php#L41-L44) to ensure compatibility with PHPUnit 10+.
+
+#### What it does
+
+This rule transforms deprecated `withConsecutive` method calls to use `willReturnCallback` with conditional assertions based on invocation count. This is necessary because `withConsecutive` was deprecated in PHPUnit 9.6 and removed in PHPUnit 10.
+
+#### Before
+
+```php
+$mock = $this->createMock(SomeClass::class);
+$mock->expects($this->exactly(2))
+    ->method('someMethod')
+    ->withConsecutive(
+        ['first'],
+        ['second']
+    );
+```
+
+#### After
+
+```php
+$mock = $this->createMock(SomeClass::class);
+$mock->expects($this->exactly(2))
+    ->method('someMethod')
+    ->willReturnCallback(function ($parameters) {
+        static $callCount = 0;
+        $callCount++;
+        
+        if ($callCount === 1) {
+            $this->assertSame(['first'], $parameters);
+        }
+        
+        if ($callCount === 2) {
+            $this->assertSame(['second'], $parameters);
+        }
+    });
+```
+
 ## Usage
 
 ### Manual Configuration
@@ -105,6 +145,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Simtel\RectorRules\Rector\RenameFindAndGetMethodCallRector;
+use Simtel\RectorRules\Rector\PHPUnit\WithConsecutiveToCallbackRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
@@ -112,6 +153,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(RenameFindAndGetMethodCallRector::class);
+    $rectorConfig->rule(WithConsecutiveToCallbackRector::class);
 };
 ```
 
@@ -200,14 +242,22 @@ The Pint configuration is stored in `pint.json` and includes:
 rector-rules/
 ├── src/
 │   └── Rector/
+│       ├── PHPUnit/
+│       │   └── WithConsecutiveToCallbackRector.php
 │       └── RenameFindAndGetMethodCallRector.php
 ├── tests/
-│   └── RenameFindAndGetMethodCallRector/
+│   ├── RenameFindAndGetMethodCallRector/
+│   │   ├── config/
+│   │   │   └── configured_rule.php
+│   │   ├── Fixture/
+│   │   │   └── some_class.php.inc
+│   │   └── RenameFindAndGetMethodCallRectorTest.php
+│   └── WithConsecutiveToCallbackRector/
 │       ├── config/
 │       │   └── configured_rule.php
 │       ├── Fixture/
-│       │   └── some_class.php.inc
-│       └── RenameFindAndGetMethodCallRectorTest.php
+│       │   └── with_consecutive.php.inc
+│       └── WithConsecutiveToCallbackRectorTest.php
 ├── composer.json
 ├── phpunit.xml
 └── README.md
